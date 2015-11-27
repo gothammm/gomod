@@ -3,6 +3,7 @@ package gomod
 import (
 	"errors"
 	"reflect"
+	"strconv"
 )
 
 func validateFields(m reflect.Value, fields []*Field) []*ModError {
@@ -18,12 +19,16 @@ func validateFields(m reflect.Value, fields []*Field) []*ModError {
 		rules := k.ValidationRules
 
 		for i, j := range rules {
-			if j {
+			val := field.String()
+
+			if _, ok := rules[RequiredTag]; !ok && field.Interface() == reflect.Zero(field.Type()).Interface() {
+				continue
+			}
+
+			if j != nil {
 
 				switch i {
 				case EmailTag:
-					val := field.String()
-
 					if !emailRX.MatchString(val) {
 						errorsList = append(errorsList, &ModError{Message: "Invalid Email", FieldName: k.Name, ModelName: m.Type().Name()})
 					}
@@ -31,7 +36,27 @@ func validateFields(m reflect.Value, fields []*Field) []*ModError {
 					if field.Interface() == reflect.Zero(field.Type()).Interface() {
 						errorsList = append(errorsList, &ModError{Message: "This field is required", FieldName: k.Name, ModelName: m.Type().Name()})
 					}
+				case PhoneIndiaTag:
+					if !INPhoneRX.MatchString(val) {
+						errorsList = append(errorsList, &ModError{Message: "Invalid Phone Number", FieldName: k.Name, ModelName: m.Type().Name()})
+					}
 
+				case MaxLenTag:
+					maxLen := j.(int)
+					if field.Kind() == reflect.Int && maxLen < field.Interface().(int) {
+						errorsList = append(errorsList, &ModError{Message: "length cannot exceed " + strconv.Itoa(maxLen), FieldName: k.Name, ModelName: m.Type().Name()})
+					} else if field.Kind() != reflect.Int && maxLen < field.Len() {
+						errorsList = append(errorsList, &ModError{Message: "length cannot exceed " + strconv.Itoa(maxLen), FieldName: k.Name, ModelName: m.Type().Name()})
+
+					}
+
+				case MinLenTag:
+					minLen := j.(int)
+					if field.Kind() == reflect.Int && minLen > field.Interface().(int) {
+						errorsList = append(errorsList, &ModError{Message: "length cannot be less than " + strconv.Itoa(minLen), FieldName: k.Name, ModelName: m.Type().Name()})
+					} else if field.Kind() != reflect.Int && minLen > field.Len() {
+						errorsList = append(errorsList, &ModError{Message: "length cannot be less than " + strconv.Itoa(minLen), FieldName: k.Name, ModelName: m.Type().Name()})
+					}
 				}
 			}
 		}

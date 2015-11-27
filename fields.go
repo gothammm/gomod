@@ -6,7 +6,7 @@ import (
 
 type Field struct {
 	Name            string
-	ValidationRules map[string]bool
+	ValidationRules map[string]interface{}
 }
 
 func getFields(m reflect.Value) ([]*Field, error) {

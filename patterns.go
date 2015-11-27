@@ -7,8 +7,11 @@ const (
 	CreditCard   string = "^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$"
 	Alpha        string = "^[a-zA-Z]+$"
 	Alphanumeric string = "^[a-zA-Z0-9]+$"
+	Numeric      string = "^[0-9]+$"
+	Phone_IN     string = "^[789]\\d{9}$"
 )
 
 var (
-	emailRX = regexp.MustCompile(Email)
+	emailRX   = regexp.MustCompile(Email)
+	INPhoneRX = regexp.MustCompile(Phone_IN)
 )

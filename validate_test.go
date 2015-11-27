@@ -5,8 +5,9 @@ import (
 )
 
 type TestModel struct {
-	Email string `json:"name" email:"true" required:"true"`
-	Age   int    `json:"age" required:"true"`
+	Email string `json:"name" email:"true"`
+	Age   int    `json:"age" max:"10"`
+	Phone int64  `json:"phone" required:"true"`
 }
 
 func TestIsStruct(t *testing.T) {
@@ -16,7 +17,7 @@ func TestIsStruct(t *testing.T) {
 		t.Error("Value should have a struct value")
 	}
 
-	if !IsStruct(&TestModel{Email: "test@test.com", Age: 10}) {
+	if !IsStruct(&TestModel{Email: "test@atest.com", Age: 20}) {
 		t.Error("IsStruct must return true")
 	}
 
@@ -28,7 +29,7 @@ func TestIsStruct(t *testing.T) {
 func TestValidate(t *testing.T) {
 	t.Parallel()
 
-	modOne := &TestModel{Email: "test@test.com", Age: 10}
+	modOne := &TestModel{Email: "test@test.com", Age: 10, Phone: 9885239317}
 
 	errorOne, err := Validate(modOne)
 
@@ -38,8 +39,12 @@ func TestValidate(t *testing.T) {
 
 	if errorOne != nil {
 		t.Error("Expected no model errors but got", len(errorOne), "model error(s) instead")
+		for _, j := range errorOne {
+			t.Error(j.String())
+		}
 	}
 
+	t.Log("-------------------------------------")
 	modTwo := TestModel{Email: "testsg.com", Age: 10}
 
 	errTwo, err := Validate(modTwo)
@@ -47,7 +52,9 @@ func TestValidate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
+	for _, j := range errTwo {
+		t.Log(j.String())
+	}
 	if errTwo == nil {
 		t.Error("Expected model errors, but got 0 model errors instead")
 	}
