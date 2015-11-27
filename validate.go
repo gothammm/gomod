@@ -16,6 +16,17 @@ func validateFields(m reflect.Value, fields []*Field) []*ModError {
 	for _, k := range fields {
 		field := m.FieldByName(k.Name)
 
+		if field.Kind() == reflect.Ptr {
+			field = field.Elem()
+		}
+
+		if field.Kind() == reflect.Struct {
+			strFields, err := getFields(field)
+			if err == nil {
+				errorsList = append(errorsList, validateFields(field, strFields)...)
+			}
+		}
+
 		rules := k.ValidationRules
 
 		for i, j := range rules {

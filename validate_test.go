@@ -8,6 +8,11 @@ type TestModel struct {
 	Email string `json:"name" email:"true"`
 	Age   int    `json:"age" max:"10"`
 	Phone int64  `json:"phone" required:"true"`
+	Test Test
+}
+
+type Test struct {
+	ProfileUrl string `json:"profile_url" required:"true"`
 }
 
 func TestIsStruct(t *testing.T) {
@@ -17,7 +22,7 @@ func TestIsStruct(t *testing.T) {
 		t.Error("Value should have a struct value")
 	}
 
-	if !IsStruct(&TestModel{Email: "test@atest.com", Age: 20}) {
+	if !IsStruct(&TestModel{Email: "test@atest.com", Age: 20, Test: Test{ ProfileUrl: "lel" } }) {
 		t.Error("IsStruct must return true")
 	}
 
@@ -29,7 +34,7 @@ func TestIsStruct(t *testing.T) {
 func TestValidate(t *testing.T) {
 	t.Parallel()
 
-	modOne := &TestModel{Email: "test@test.com", Age: 10, Phone: 9885239317}
+	modOne := &TestModel{Email: "test@test.com", Age: 10, Phone: 9885239317, Test: Test{ ProfileUrl: "lel" }}
 	var errorOne Errors
 	errorOne, err := Validate(modOne)
 
