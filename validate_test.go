@@ -30,7 +30,7 @@ func TestValidate(t *testing.T) {
 	t.Parallel()
 
 	modOne := &TestModel{Email: "test@test.com", Age: 10, Phone: 9885239317}
-
+	var errorOne Errors
 	errorOne, err := Validate(modOne)
 
 	if err != nil {
@@ -39,23 +39,25 @@ func TestValidate(t *testing.T) {
 
 	if errorOne != nil {
 		t.Error("Expected no model errors but got", len(errorOne), "model error(s) instead")
-		for _, j := range errorOne {
+		for _, j := range errorOne.Json() {
 			t.Error(j.String())
 		}
 	}
 
 	t.Log("-------------------------------------")
-	modTwo := TestModel{Email: "testsg.com", Age: 10}
+	modTwo := &TestModel{Email: "testsg.com", Age: 10}
 
-	errTwo, err := Validate(modTwo)
+	var errorTwo Errors
 
-	if err != nil {
-		t.Error(err)
+	errorTwo, errt := Validate(modTwo)
+
+	if errt != nil {
+		t.Error(errt)
 	}
-	for _, j := range errTwo {
+	for _, j := range errorTwo.Json() {
 		t.Log(j.String())
 	}
-	if errTwo == nil {
+	if errorTwo == nil {
 		t.Error("Expected model errors, but got 0 model errors instead")
 	}
 }
