@@ -30,32 +30,32 @@ func validateFields(m reflect.Value, fields []*Field) []*ModError {
 				switch i {
 				case EmailTag:
 					if !emailRX.MatchString(val) {
-						errorsList = append(errorsList, &ModError{Message: "Invalid Email", FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "Invalid Email", Field: k})
 					}
 				case RequiredTag:
 					if field.Interface() == reflect.Zero(field.Type()).Interface() {
-						errorsList = append(errorsList, &ModError{Message: "This field is required", FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "This field is required", Field: k})
 					}
 				case PhoneIndiaTag:
 					if !INPhoneRX.MatchString(val) {
-						errorsList = append(errorsList, &ModError{Message: "Invalid Phone Number", FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "Invalid Phone Number", Field: k})
 					}
 
 				case MaxLenTag:
 					maxLen := j.(int)
 					if field.Kind() == reflect.Int && maxLen < field.Interface().(int) {
-						errorsList = append(errorsList, &ModError{Message: "length cannot exceed " + strconv.Itoa(maxLen), FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "length cannot exceed " + strconv.Itoa(maxLen), Field: k})
 					} else if field.Kind() != reflect.Int && maxLen < field.Len() {
-						errorsList = append(errorsList, &ModError{Message: "length cannot exceed " + strconv.Itoa(maxLen), FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "length cannot exceed " + strconv.Itoa(maxLen), Field: k})
 
 					}
 
 				case MinLenTag:
 					minLen := j.(int)
 					if field.Kind() == reflect.Int && minLen > field.Interface().(int) {
-						errorsList = append(errorsList, &ModError{Message: "length cannot be less than " + strconv.Itoa(minLen), FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "length cannot be less than " + strconv.Itoa(minLen), Field: k})
 					} else if field.Kind() != reflect.Int && minLen > field.Len() {
-						errorsList = append(errorsList, &ModError{Message: "length cannot be less than " + strconv.Itoa(minLen), FieldName: k.Name, ModelName: m.Type().Name()})
+						errorsList = append(errorsList, &ModError{Message: "length cannot be less than " + strconv.Itoa(minLen), Field: k})
 					}
 				}
 			}

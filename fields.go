@@ -6,6 +6,7 @@ import (
 
 type Field struct {
 	Name            string
+	JsonName        string
 	ValidationRules map[string]interface{}
 }
 
@@ -28,7 +29,7 @@ func getFields(m reflect.Value) ([]*Field, error) {
 		if err != nil {
 			return nil, err
 		}
-		fields = append(fields, &Field{Name: field.Name, ValidationRules: validationRule})
+		fields = append(fields, &Field{Name: field.Name, JsonName: getFieldName(field), ValidationRules: validationRule})
 	}
 	return fields, nil
 }

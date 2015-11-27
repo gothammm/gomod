@@ -13,7 +13,17 @@ const (
 	NumericTag    string = "numeric"
 	MaxLenTag     string = "max"
 	MinLenTag     string = "min"
+	JsonTag       string = "json"
 )
+
+func getFieldName(m reflect.StructField) string {
+	return func() string {
+		if jsonTag := m.Tag.Get(JsonTag); jsonTag != "" {
+			return jsonTag
+		}
+		return m.Name
+	}()
+}
 
 func getValidationRules(m reflect.StructField) (map[string]interface{}, error) {
 	tags := make(map[string]interface{})

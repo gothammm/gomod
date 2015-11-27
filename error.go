@@ -1,11 +1,10 @@
 package gomod
 
 type ModError struct {
-	Message   string
-	FieldName string
-	ModelName string
+	Message string
+	Field   *Field
 }
 
 func (e *ModError) String() string {
-	return "Model Name: " + e.ModelName + ", Field Name: " + e.FieldName + ", Message: " + e.Message
+	return "Field: " + e.Field.Name + " Message: " + e.Message
 }
